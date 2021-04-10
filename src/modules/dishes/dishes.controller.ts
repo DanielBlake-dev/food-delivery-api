@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Post,
   Put,
   Query,
@@ -21,8 +22,8 @@ export class DishesController {
   ) {}
 
   @Get('/')
-  public getAll() {
-    return this.dishesService.getAll();
+  public getAll(@Param('category') category: string) {
+    return this.dishesService.getAll(category);
   }
 
   @Get('/:id')

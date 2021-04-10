@@ -1,3 +1,4 @@
+import { Dishes, DishesDocument } from './../dishes/models/dishes.model';
 import { CreateCategoryDTO } from './dto/create-category.dto';
 import { Category, CategoryDocument } from './models/category.model';
 import { Injectable } from '@nestjs/common';
@@ -9,10 +10,19 @@ export class CategoriesService {
   constructor(
     @InjectModel(Category.name)
     private readonly categoryModel: Model<CategoryDocument>,
+    @InjectModel(Dishes.name)
+    private readonly dishModel: Model<DishesDocument>,
   ) {}
 
-  public async create(category: CreateCategoryDTO | CreateCategoryDTO[]) {
-    return await this.categoryModel.create(category);
+  public async create(category: CreateCategoryDTO) {
+    const created = await this.categoryModel.create(category);
+    const { dishes, name } = category;
+
+    dishes.forEach((dish) => {
+      this.dishModel.findByIdAndUpdate(dish, { $set: { category: name } });
+    });
+
+    return created;
   }
 
   public async getAll() {

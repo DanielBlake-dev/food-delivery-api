@@ -16,7 +16,14 @@ export class DishesService {
     return await this.dishesModel.create(dish);
   }
 
-  public async getAll() {
+  public async getAll(category?: string) {
+    if (category) {
+      return await this.dishesModel
+        .find({ category })
+        .populate('ingredients')
+        .populate('category');
+    }
+
     return await this.dishesModel
       .find()
       .populate('ingredients')
